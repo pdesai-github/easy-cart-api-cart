@@ -28,4 +28,19 @@ spec:
           valueFrom:
             configMapKeyRef:
               name: easy-kart-cart-config-map
-              key: authKey     
+              key: authKey 
+        - name: CosmosDB__databaseId
+          valueFrom:
+            configMapKeyRef:
+              name: easy-kart-cart-config-map
+              key: databaseId
+        - name: CosmosDB__containerId
+          valueFrom:
+            configMapKeyRef:
+              name: easy-kart-cart-config-map
+              key: containerId
+        - name: CosmosDB__partitionKey
+          valueFrom:
+            configMapKeyRef:
+              name: easy-kart-cart-config-map
+              key: partitionKey
