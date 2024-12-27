@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: easy-kart-cart
+  namespace: easy-kart
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: easy-kart-cart #This should be same label
+  template:
+    metadata:
+      labels:
+        app: easy-kart-cart #This should be same label
+    spec:
+      containers:
+      - name: easy-kart-cart
+        image: pdesaidocker/easy-kart-api-cart:{{imageTag}}
+        ports:
+        - containerPort: 8080 #port defined in image dockerfile
+        env:
+        - name: CosmosDB__endpoint
+          valueFrom:
+            configMapKeyRef:
+              name: easy-kart-cart-config-map # ConfigMap name
+              key: endpoint         # Key in the ConfigMap
+        - name: CosmosDB__authKey
+          valueFrom:
+            configMapKeyRef:
+              name: easy-kart-cart-config-map
+              key: authKey     

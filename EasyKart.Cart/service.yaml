@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: easy-kart-cart-service
+  namespace: easy-kart
+spec:
+  selector:
+    app: easy-kart-cart #This should be same label
+  ports:
+    - protocol: TCP
+      port: 80 #Other pods in the cluster can connect to this service on port 80
+      targetPort: 8080 #port defined in image dockerfile
+  type: LoadBalancer
