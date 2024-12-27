@@ -13,7 +13,10 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["EasyKart.Cart/EasyKart.Cart.csproj", "EasyKart.Cart/"]
-RUN dotnet restore "./EasyKart.Cart/EasyKart.Cart.csproj"
+COPY ["EasyKart.Cart/nuget.config", "EasyKart.Cart/"]
+
+RUN dotnet restore "./EasyKart.Cart/EasyKart.Cart.csproj" --configfile "./EasyKart.Cart/nuget.config"
+
 COPY . .
 WORKDIR "/src/EasyKart.Cart"
 RUN dotnet build "./EasyKart.Cart.csproj" -c $BUILD_CONFIGURATION -o /app/build
