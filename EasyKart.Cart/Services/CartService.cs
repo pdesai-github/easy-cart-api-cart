@@ -45,5 +45,10 @@ namespace EasyKart.Cart.Services
             }            
             return cart;
         }
+
+        public async Task<bool> EmptyCartAsync(Guid userId)
+        {
+            return await _cartRepository.EmptyCartAsync(userId);
+        }
     }
 }

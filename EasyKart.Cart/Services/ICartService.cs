@@ -7,5 +7,6 @@ namespace EasyKart.Cart.Services
     {
         Task<EKModels.Cart> AddItemToCartAsync(EKModels.Product product, int quantity);
         Task<EKModels.Cart> GetCartAsync(Guid userId);
+        Task<bool> EmptyCartAsync(Guid userId);
     }
 }

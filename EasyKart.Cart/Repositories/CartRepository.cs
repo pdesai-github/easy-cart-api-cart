@@ -82,5 +82,24 @@ namespace EasyKart.Cart.Repositories
             }
         }
 
+        //Empty cart
+        public async Task<bool> EmptyCartAsync(Guid userId)
+        {
+            try
+            {
+                var cart = await GetCartAsync(userId);
+                if (cart != null)
+                {
+                    cart.Items.Clear();
+                    await _container.UpsertItemAsync(cart, new PartitionKey(cart.UserId.ToString()));
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
     }
 }

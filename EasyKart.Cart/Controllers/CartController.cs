@@ -45,5 +45,13 @@ namespace EasyKart.Cart.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+
+        //Empty Cart
+        [HttpDelete("{userId}")]
+        public async Task<IActionResult> EmptyCartAsync(Guid userId)
+        {
+            await _cartService.EmptyCartAsync(userId);
+            return Ok();
+        }
     }
 }
