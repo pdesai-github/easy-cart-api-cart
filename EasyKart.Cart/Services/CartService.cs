@@ -8,6 +8,7 @@ namespace EasyKart.Cart.Services
     public class CartService : ICartService
     {
         private readonly ICartRepository _cartRepository;
+        private Guid tempUserId = Guid.Parse("d8e1c062-4d3e-4326-9f16-31b28f62a4c5");
         public CartService(ICartRepository cartRepository)
         {
             _cartRepository = cartRepository;
@@ -16,57 +17,32 @@ namespace EasyKart.Cart.Services
         public async Task<Models.Cart> AddItemToCartAsync(Models.Product product, int quantity)
         {
 
-            Models.Cart cart = await GetCartAsync(Guid.Parse("d8e1c062-4d3e-4326-9f16-31b28f62a4c5"));
+            Models.Cart cart = await GetCartAsync(tempUserId);
             if (cart == null)
             {
-                cart = new Models.Cart
-                {
-                    UserId = Guid.Parse("d8e1c062-4d3e-4326-9f16-31b28f62a4c5"),
-                    Items = new List<Models.CartItem>()
-                };
-                cart.Items.Add(new Models.CartItem
-                {
-                    Product = product,
-                    Quantity = quantity
-                });
+                cart = new Models.Cart(tempUserId);
+                cart.addProduct(product, quantity);
             }
             else
             {
-                var item = cart.Items.FirstOrDefault(i => i.Product.Id == product.Id);
-                if (item == null)
-                {
-                    cart.Items.Add(new Models.CartItem
-                    {
-                        Product = product,
-                        Quantity = quantity
-                    });
-                }
-                else
-                {
-                    item.Quantity += quantity;
-                }
+                cart.addProduct(product, quantity);
             }
-            await _cartRepository.UpdateCartAsync(cart);
-            cart = await GetCartAsync(Guid.Parse("d8e1c062-4d3e-4326-9f16-31b28f62a4c5"));
 
-            CalculateCartPrice(cart);
+            await _cartRepository.UpdateCartAsync(cart);
+            cart = await GetCartAsync(tempUserId);
 
             return cart;
-        }
-
-        private static void CalculateCartPrice(Models.Cart cart)
-        {
-            cart.Price = 0;
-            foreach (var item in cart.Items)
-            {
-                cart.Price = cart.Price + (item.Product.Price * item.Quantity);
-            }
         }
 
         public async Task<Models.Cart> GetCartAsync(Guid userId)
         {
             Models.Cart cart = await _cartRepository.GetCartAsync(userId);
-            CalculateCartPrice(cart);
+            if (cart == null)
+            {
+                cart = new Models.Cart(userId);
+                await _cartRepository.AddItemToCartAsync(cart);
+                cart = await _cartRepository.GetCartAsync(userId);
+            }            
             return cart;
         }
     }
