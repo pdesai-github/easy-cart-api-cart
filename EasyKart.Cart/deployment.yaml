@@ -44,7 +44,7 @@ spec:
             configMapKeyRef:
               name: easy-kart-cart-config-map
               key: partitionKey
-         - name: ConnectionStrings__azservicebusconnstr
+        - name: ConnectionStrings__azservicebusconnstr
           valueFrom:
             configMapKeyRef:
               name: easy-kart-cart-config-map
