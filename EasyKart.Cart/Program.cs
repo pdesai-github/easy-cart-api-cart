@@ -1,6 +1,8 @@
 
 using EasyKart.Cart.Repositories;
 using EasyKart.Cart.Services;
+using EasyKart.Shared.Models;
+using MassTransit;
 
 namespace EasyKart.Cart
 {
@@ -20,6 +22,21 @@ namespace EasyKart.Cart
                            .AllowAnyMethod()
                            .AllowAnyHeader()
                            .AllowCredentials();
+                });
+            });
+
+            builder.Services.AddMassTransit((x) =>
+            {
+              
+                x.UsingAzureServiceBus((context, config) =>
+                {
+                    config.Host(builder.Configuration.GetConnectionString("azservicebusconnstr"));
+
+                    config.Message<Notification>(configTopology =>
+                    {
+                        configTopology.SetEntityName("notificationtopic");
+                    });
+                 
                 });
             });
 
