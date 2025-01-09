@@ -9,3 +9,4 @@ data:
   databaseId: "easy-kart"
   containerId: "Cart"
   partitionKey: "/userid"
+  azservicebusconnstr: ""
