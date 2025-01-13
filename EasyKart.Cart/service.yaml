@@ -10,4 +10,4 @@ spec:
     - protocol: TCP
       port: 80 #Other pods in the cluster can connect to this service on port 80
       targetPort: 8080 #port defined in image dockerfile
-  type: LoadBalancer
+  type: ClusterIP
