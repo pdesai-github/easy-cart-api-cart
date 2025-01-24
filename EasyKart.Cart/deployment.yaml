@@ -18,11 +18,11 @@ spec:
         image: pdesaidocker/easy-kart-api-cart:{{imageTag}}
         resources:
           requests:
-            memory: "128Mi"   # Minimum memory for the container to function
-            cpu: "25m"       # Minimum CPU for the container to function
+            memory: "256Mi"   # Minimum memory for the container to function
+            cpu: "50m"       # Minimum CPU for the container to function
           limits:
-            memory: "256Mi"   # Maximum memory that can be used
-            cpu: "50m"       # Maximum CPU that can be used
+            memory: "512Mi"   # Maximum memory that can be used
+            cpu: "100m"       # Maximum CPU that can be used
         ports:
         - containerPort: 8080 #port defined in image dockerfile
         env:
@@ -41,3 +41,41 @@ spec:
             secretKeyRef:
                 name: easy-kart-secret  
                 key: azservicebusconnstr
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: easy-kart-cart-service
+  namespace: easy-kart
+spec:
+  selector:
+    app: easy-kart-cart #This should be same label
+  ports:
+    - protocol: TCP
+      port: 80 #Other pods in the cluster can connect to this service on port 80
+      targetPort: 8080 #port defined in image dockerfile
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: easy-kart-cart-ingress
+  namespace: easy-kart
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /api/cart/$2
+    nginx.ingress.kubernetes.io/use-regex: 'true'
+    ingress.class: "nginx"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: easy-kart.centralindia.cloudapp.azure.com
+      http:
+        paths:
+          - path: /cart(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: easy-kart-cart-service
+                port:
+                  number: 80
+---
